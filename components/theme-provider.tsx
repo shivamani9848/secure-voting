@@ -1,6 +1,8 @@
-import React from "react";
+"use client"
 
-// This is a placeholder ThemeProvider. Replace with your actual implementation if needed.
-export function ThemeProvider({ children, ...props }: { children: React.ReactNode; [key: string]: any }) {
-  return <>{children}</>;
+import * as React from "react"
+import { ThemeProvider as NextThemesProvider } from "next-themes"
+
+export function ThemeProvider({ children, ...props }: React.ComponentProps<typeof NextThemesProvider>) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
 } 
