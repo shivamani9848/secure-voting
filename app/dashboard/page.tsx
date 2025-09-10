@@ -59,14 +59,19 @@ export default function DashboardPage() {
   const [selectedCandidate, setSelectedCandidate] = useState<number | null>(null)
   const [votingInProgress, setVotingInProgress] = useState(false)
   const router = useRouter()
+  const [voterId, setVoterId] = useState<string | null>(null)
+  const [mobile, setMobile] = useState<string | null>(null)
 
   const candidates = getCandidates(t)
 
   useEffect(() => {
-    // Check if user has already voted
-    const hasVotedStatus = localStorage.getItem("hasVoted")
-    const selectedCandidateId = localStorage.getItem("selectedCandidate")
-
+    const activeVoterId = localStorage.getItem("activeVoterId")
+    const activeMobile = localStorage.getItem("activeMobile")
+    setVoterId(activeVoterId)
+    setMobile(activeMobile)
+    if (!activeVoterId) return
+    const hasVotedStatus = localStorage.getItem(`hasVoted_${activeVoterId}`)
+    const selectedCandidateId = localStorage.getItem(`selectedCandidate_${activeVoterId}`)
     if (hasVotedStatus === "true") {
       setHasVoted(true)
       if (selectedCandidateId) {
@@ -90,10 +95,11 @@ export default function DashboardPage() {
         candidateId: candidateId,
       }
 
-      // Store vote data and voting status
-      localStorage.setItem("hasVoted", "true")
-      localStorage.setItem("voteData", JSON.stringify(voteData))
-      localStorage.setItem("selectedCandidate", candidateId.toString())
+      if (voterId) {
+        localStorage.setItem(`hasVoted_${voterId}`, "true")
+        localStorage.setItem(`voteData_${voterId}`, JSON.stringify(voteData))
+        localStorage.setItem(`selectedCandidate_${voterId}`, candidateId.toString())
+      }
 
       setHasVoted(true)
       setVotingInProgress(false)
@@ -142,7 +148,7 @@ export default function DashboardPage() {
                 <div>
                   <CardTitle>{t("dashboard.welcome")}</CardTitle>
                   <CardDescription>
-                    {t("dashboard.voterid")}: ABC123456789 | {t("dashboard.constituency")}: Mumbai North
+                    {t("dashboard.voterid")}: {voterId || "-"} | {t("dashboard.mobile")}: {mobile || "-"} | {t("dashboard.constituency")}: Mumbai North
                   </CardDescription>
                   <div className="flex items-center mt-2">
                     {hasVoted ? (

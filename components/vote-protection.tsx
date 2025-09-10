@@ -17,9 +17,13 @@ export function VoteProtection({ children }: { children: React.ReactNode }) {
   const [voteData, setVoteData] = useState<any>(null)
 
   useEffect(() => {
-    const hasVotedStatus = localStorage.getItem("hasVoted")
-    const storedVoteData = localStorage.getItem("voteData")
-
+    const activeVoterId = localStorage.getItem("activeVoterId")
+    if (!activeVoterId) {
+      setHasVoted(null)
+      return
+    }
+    const hasVotedStatus = localStorage.getItem(`hasVoted_${activeVoterId}`)
+    const storedVoteData = localStorage.getItem(`voteData_${activeVoterId}`)
     setHasVoted(hasVotedStatus === "true")
     if (storedVoteData) {
       setVoteData(JSON.parse(storedVoteData))
